@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Générateur de Prompt Gemini 3 - Méthodologie Enseignante</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f3f4f6; }
+        .xml-tag { color: #2563eb; font-family: monospace; font-weight: bold; }
+        .preview-box { background-color: #1e293b; color: #e2e8f0; font-family: 'Consolas', 'Monaco', monospace; white-space: pre-wrap; }
+        .input-group:focus-within label { color: #2563eb; }
+        /* Custom scrollbar for the preview */
+        .preview-box::-webkit-scrollbar { width: 8px; }
+        .preview-box::-webkit-scrollbar-track { background: #0f172a; }
+        .preview-box::-webkit-scrollbar-thumb { background: #475569; border-radius: 4px; }
+    </style>
+</head>
+<body class="text-gray-800 h-screen flex flex-col overflow-hidden">
+
+    <!-- Header -->
+    <header class="bg-white shadow-sm z-10 p-4 border-b border-gray-200">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <div class="bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-2 rounded-lg">
+                    <i class="fa-solid fa-robot text-xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold text-gray-900">Architecte de Prompt Gemini 3</h1>
+                    <p class="text-xs text-gray-500">Basé sur la méthodologie de structuration XML & Ancrage</p>
+                </div>
+            </div>
+            <button onclick="copyToClipboard()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg shadow transition flex items-center gap-2 text-sm font-medium">
+                <i class="fa-regular fa-copy"></i> Copier le Prompt
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-1 overflow-hidden flex flex-col md:flex-row max-w-7xl mx-auto w-full">
+        
+        <!-- Left Panel: Inputs -->
+        <div class="w-full md:w-1/2 p-6 overflow-y-auto bg-white border-r border-gray-200 shadow-inner">
+            <div class="space-y-8 pb-12">
+                
+                <!-- Section 1: Identité -->
+                <div class="input-group">
+                    <div class="flex justify-between items-center mb-2">
+                        <label class="block text-sm font-bold uppercase tracking-wide text-gray-700">1. Rôle & Identité (Persona)</label>
+                        <span class="text-xs text-blue-600 font-mono">&lt;role&gt;</span>
+                    </div>
+                    <p class="text-xs text-gray-500 mb-2">Définissez qui est l'IA (ex: Expert pédagogue, Psychologue du travail).</p>
+                    <textarea id="roleInput" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition h-24 text-sm" placeholder="Tu es un expert en pédagogie différenciée avec 20 ans d'expérience..."></textarea>
+                </div>
+
+                <!-- Section 2: Contexte -->
+                <div class="input-group">
+                    <div class="flex justify-between items-center mb-2">
+                        <label class="block text-sm font-bold uppercase tracking-wide text-gray-700">2. Contexte & Données (Ancrage)</label>
+                        <span class="text-xs text-blue-600 font-mono">&lt;context&gt;</span>
+                    </div>
+                    <p class="text-xs text-gray-500 mb-2">Collez ici les articles, données ou le cours complet. Ce bloc sera placé en premier pour l'ancrage.</p>
+                    <textarea id="contextInput" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition h-40 text-sm" placeholder="Voici le texte de référence ou les données à analyser..."></textarea>
+                </div>
+
+                <!-- Section 3: Paramètres & Contraintes -->
+                <div class="bg-gray-50 p-4 rounded-xl border border-gray-200">
+                    <h3 class="text-sm font-bold uppercase text-gray-700 mb-4 flex items-center gap-2">
+                        <i class="fa-solid fa-sliders text-gray-400"></i> 3. Paramètres & Contraintes
+                    </h3>
+                    
+                    <!-- Grid for controls -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-600 mb-1">Verbosité</label>
+                            <select id="verbositySelect" class="w-full p-2 border border-gray-300 rounded bg-white text-sm">
+                                <option value="default">Normale (Efficace)</option>
+                                <option value="low">Faible (Concis)</option>
+                                <option value="high">Élevée (Détaillé)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-600 mb-1">Format de sortie</label>
+                            <input type="text" id="formatInput" class="w-full p-2 border border-gray-300 rounded bg-white text-sm" placeholder="Ex: Tableau, JSON, Liste à puces">
+                        </div>
+                    </div>
+
+                    <!-- Deep Thinking Toggle -->
+                    <div class="flex items-start gap-3 p-3 bg-indigo-50 border border-indigo-100 rounded-lg">
+                        <div class="flex items-center h-5">
+                            <input id="thinkingToggle" type="checkbox" class="w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">
+                        </div>
+                        <div class="text-xs">
+                            <label for="thinkingToggle" class="font-medium text-indigo-900">Activer le Raisonnement Profond (Deep Thinking)</label>
+                            <p class="text-indigo-700 mt-1">Ajoute des étapes explicites de planification et d'autocritique avant la réponse finale.</p>
+                        </div>
+                    </div>
+
+                    <!-- Manual Constraints -->
+                    <div class="mt-4">
+                        <label class="block text-xs font-semibold text-gray-600 mb-1">Contraintes Spécifiques (À faire / Ne pas faire)</label>
+                        <textarea id="constraintsInput" class="w-full p-2 border border-gray-300 rounded bg-white text-sm h-20" placeholder="Ex: Ne pas utiliser de jargon technique, se limiter à l'Europe..."></textarea>
+                    </div>
+                </div>
+
+                <!-- Section 4: Few-Shot Examples -->
+                <div class="input-group">
+                    <div class="flex justify-between items-center mb-2">
+                        <label class="block text-sm font-bold uppercase tracking-wide text-gray-700">4. Exemples (Few-Shot)</label>
+                        <span class="text-xs text-blue-600 font-mono">&lt;examples&gt;</span>
+                    </div>
+                    <p class="text-xs text-gray-500 mb-2">Montrez au modèle ce que vous attendez (Optionnel mais recommandé).</p>
+                    <textarea id="examplesInput" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition h-24 text-sm" placeholder="Exemple 1 : [Entrée] -> [Sortie désiré]"></textarea>
+                </div>
+
+                <!-- Section 5: Tâche -->
+                <div class="input-group">
+                    <div class="flex justify-between items-center mb-2">
+                        <label class="block text-sm font-bold uppercase tracking-wide text-gray-700 text-blue-700">5. Tâche & Instruction (Final)</label>
+                        <span class="text-xs text-blue-600 font-mono">&lt;task&gt;</span>
+                    </div>
+                    <p class="text-xs text-gray-500 mb-2">L'instruction directe. Elle sera placée à la fin du prompt pour maximiser l'attention.</p>
+                    <textarea id="taskInput" class="w-full p-3 border-2 border-blue-100 bg-blue-50 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition h-32 text-sm font-medium" placeholder="Ex: Rédige le plan détaillé de l'exposé en te basant sur l'analyse ci-dessus."></textarea>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Right Panel: Preview -->
+        <div class="w-full md:w-1/2 flex flex-col bg-gray-900 border-t md:border-t-0 md:border-l border-gray-700 h-1/2 md:h-full">
+            <div class="p-3 bg-gray-800 border-b border-gray-700 flex justify-between items-center">
+                <span class="text-xs text-gray-400 font-bold uppercase tracking-wider">Aperçu du Prompt (Ready for Gemini 3)</span>
+                <span class="text-[10px] bg-gray-700 text-gray-300 px-2 py-1 rounded">Format XML Structuré</span>
+            </div>
+            <div class="flex-1 relative">
+                <textarea id="finalOutput" readonly class="preview-box w-full h-full p-6 text-sm resize-none focus:outline-none" spellcheck="false"></textarea>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Notification Toast -->
+    <div id="toast" class="fixed bottom-5 right-5 bg-green-600 text-white px-6 py-3 rounded shadow-lg transform translate-y-20 opacity-0 transition-all duration-300 z-50">
+        Prompt copié dans le presse-papier !
+    </div>
+
+    <script>
+        // DOM Elements
+        const inputs = {
+            role: document.getElementById('roleInput'),
+            context: document.getElementById('contextInput'),
+            task: document.getElementById('taskInput'),
+            constraints: document.getElementById('constraintsInput'),
+            format: document.getElementById('formatInput'),
+            examples: document.getElementById('examplesInput'),
+            verbosity: document.getElementById('verbositySelect'),
+            thinking: document.getElementById('thinkingToggle')
+        };
+        const output = document.getElementById('finalOutput');
+        const toast = document.getElementById('toast');
+
+        // Logic to build the prompt
+        function generatePrompt() {
+            const role = inputs.role.value.trim();
+            const context = inputs.context.value.trim();
+            const task = inputs.task.value.trim();
+            const userConstraints = inputs.constraints.value.trim();
+            const format = inputs.format.value.trim();
+            const examples = inputs.examples.value.trim();
+            const verbosity = inputs.verbosity.value;
+            const useThinking = inputs.thinking.checked;
+
+            let promptParts = [];
+
+            // 1. Role (Identity)
+            if (role) {
+                promptParts.push(`<role>\n${role}\n</role>`);
+            }
+
+            // 2. Constraints Compilation
+            let allConstraints = [];
+            
+            // Add user defined constraints
+            if (userConstraints) allConstraints.push(userConstraints);
+            
+            // Add Verbosity instructions
+            if (verbosity === 'low') {
+                allConstraints.push("Style : Extrêmement concis, va droit au but. Pas de phrases de remplissage.");
+            } else if (verbosity === 'high') {
+                allConstraints.push("Style : Très détaillé, exhaustif et explicatif.");
+            } else {
+                allConstraints.push("Style : Direct et professionnel.");
+            }
+
+            // Add Format instructions into constraints if simple, otherwise separate tag could be used
+            if (format) {
+                allConstraints.push(`Format de sortie requis : ${format}`);
+            }
+
+            // Add Deep Thinking Instructions
+            if (useThinking) {
+                allConstraints.push("PROCESSUS DE PENSÉE REQUIS :");
+                allConstraints.push("1. PLANIFICATION : Avant de répondre, décris étape par étape comment tu vas traiter la demande.");
+                allConstraints.push("2. AUTOCRITIQUE : Vérifie ta réponse pour t'assurer qu'elle respecte toutes les contraintes et l'intention de l'utilisateur.");
+                allConstraints.push("3. RÉPONSE FINALE : Donne ta réponse finale uniquement après ces étapes.");
+            }
+
+            if (allConstraints.length > 0) {
+                promptParts.push(`<constraints>\n${allConstraints.join('\n')}\n</constraints>`);
+            }
+
+            // 3. Examples (Few-Shot)
+            if (examples) {
+                promptParts.push(`<examples>\n${examples}\n</examples>`);
+            }
+
+            // 4. Context (Anchoring Strategy: Context comes before Task)
+            if (context) {
+                promptParts.push(`<context>\n${context}\n</context>`);
+                // Anchor phrase
+                promptParts.push(`En te basant strictement sur le contexte fourni ci-dessus dans les balises <context>...`);
+            }
+
+            // 5. Task (Always last for Recency Bias)
+            if (task) {
+                promptParts.push(`<task>\n${task}\n</task>`);
+            } else {
+                promptParts.push(`<task>\n[En attente de votre instruction...]\n</task>`);
+            }
+
+            // Assemble
+            output.value = promptParts.join('\n\n');
+        }
+
+        // Event Listeners
+        Object.values(inputs).forEach(input => {
+            input.addEventListener('input', generatePrompt);
+            input.addEventListener('change', generatePrompt); // For select/checkbox
+        });
+
+        // Initial generation
+        generatePrompt();
+
+        // Copy Function
+        function copyToClipboard() {
+            output.select();
+            output.setSelectionRange(0, 99999); // Mobile
+            document.execCommand('copy');
+            
+            // Show toast
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            setTimeout(() => {
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
