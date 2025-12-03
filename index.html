@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Générateur de Prompt Gemini 3</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f3f4f6; }
+        
+        /* Styles spécifiques à l'outil Prompt Parfait */
+        .xml-tag { color: #2563eb; font-family: monospace; font-weight: bold; }
+        .preview-box { background-color: #1e293b; color: #e2e8f0; font-family: 'Consolas', 'Monaco', monospace; white-space: pre-wrap; }
+        .input-group:focus-within label { color: #2563eb; }
+        .preview-box::-webkit-scrollbar { width: 8px; }
+        .preview-box::-webkit-scrollbar-track { background: #0f172a; }
+        .preview-box::-webkit-scrollbar-thumb { background: #475569; border-radius: 4px; }
+
+        /* Animation de transition */
+        .fade-in { animation: fadeIn 0.5s ease-in-out; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Custom Checkbox Deep Thinking */
+        .toggle-checkbox:checked {
+            right: 0;
+            border-color: #4f46e5;
+        }
+        .toggle-checkbox:checked + .toggle-label {
+            background-color: #4f46e5;
+        }
+    </style>
+</head>
+<body class="text-gray-800 h-screen flex flex-col overflow-hidden">
+
+    <!-- PAGE D'ACCUEIL (Landing Page) -->
+    <div id="landing-page" class="flex-1 flex flex-col items-center justify-center p-4 bg-gray-50 overflow-y-auto">
+        
+        <div class="max-w-4xl w-full text-center space-y-8 fade-in">
+            
+            <!-- Conteneur de l'image -->
+            <div class="bg-white p-4 rounded-2xl shadow-xl border border-gray-200 transition-transform hover:scale-[1.01] duration-300">
+                <!-- Image principale -->
+                <img src="unnamed.png" 
+                     alt="Anatomie du Prompt Parfait pour Gemini 3" 
+                     class="w-full h-auto rounded-lg"
+                     onerror="document.getElementById('img-placeholder').style.display='flex'; this.style.display='none';">
+                
+                <!-- Placeholder -->
+                <div id="img-placeholder" class="hidden flex-col items-center justify-center py-20 bg-indigo-50 rounded-lg border-2 border-dashed border-indigo-200 text-indigo-400">
+                    <i class="fa-solid fa-image text-6xl mb-4"></i>
+                    <p class="text-lg font-semibold">Image "unnamed.png" non trouvée</p>
+                    <p class="text-sm text-gray-500">Placez votre image dans le même dossier que ce fichier HTML.</p>
+                </div>
+            </div>
+
+            <!-- Bouton d'action -->
+            <button onclick="goToApp()" class="group relative inline-flex items-center justify-center px-8 py-4 font-bold text-white transition-all duration-200 bg-blue-600 font-lg rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-600 hover:bg-blue-700 hover:shadow-lg transform hover:-translate-y-1">
+                <span class="mr-2 text-xl">Créer votre prompt parfait pour Gemini 3</span>
+                <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
+                <div class="absolute -inset-3 rounded-full bg-blue-400 opacity-20 group-hover:opacity-40 blur-lg transition-opacity duration-200"></div>
+            </button>
+            
+            <div class="text-gray-500 text-sm mt-4 space-y-2">
+                <p>Basé sur la méthodologie de structuration XML & Ancrage</p>
+                
+                <!-- Copyright & Licence -->
+                <div class="pt-6 border-t border-gray-200 w-1/2 mx-auto">
+                    <p class="font-medium">© 2025 Absil Olivier</p>
+                    <p class="text-xs mt-1 flex items-center justify-center gap-1 text-gray-400">
+                        <i class="fa-brands fa-creative-commons"></i>
+                        <i class="fa-brands fa-creative-commons-by"></i>
+                        <i class="fa-brands fa-creative-commons-nc"></i>
+                        <i class="fa-brands fa-creative-commons-sa"></i>
+                        Licence CC BY-NC-SA 4.0
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- APPLICATION (Contenu de Prompt-parfait.html) -->
+    <div id="app-page" class="hidden flex-col h-full w-full fade-in">
+        <!-- Header -->
+        <header class="bg-white shadow-sm z-10 p-4 border-b border-gray-200">
+            <div class="max-w-7xl mx-auto flex justify-between items-center">
+                <div class="flex items-center gap-3 cursor-pointer" onclick="goHome()" title="Retour à l'accueil">
+                    <div class="bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-2 rounded-lg hover:opacity-90 transition">
+                        <i class="fa-solid fa-robot text-xl"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-xl font-bold text-gray-900">Architecte de Prompt Gemini 3</h1>
+                        <p class="text-xs text-gray-500">Basé sur la méthodologie de structuration XML & Ancrage</p>
+                    </div>
+                </div>
+                <div class="flex gap-2">
+                    <button onclick="goHome()" class="md:hidden bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-2 rounded-lg text-sm">
+                        <i class="fa-solid fa-home"></i>
+                    </button>
+                    <button onclick="copyToClipboard()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg shadow transition flex items-center gap-2 text-sm font-medium">
+                        <i class="fa-regular fa-copy"></i> <span class="hidden md:inline">Copier le Prompt</span>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="flex-1 overflow-hidden flex flex-col md:flex-row max-w-7xl mx-auto w-full">
+            
+            <!-- Left Panel: Inputs -->
+            <div class="w-full md:w-1/2 p-6 overflow-y-auto bg-white border-r border-gray-200 shadow-inner">
+                <div class="space-y-8 pb-12">
+                    
+                    <!-- Section 1: Identité -->
+                    <div class="input-group">
+                        <div class="flex justify-between items-center mb-2">
+                            <label class="block text-sm font-bold uppercase tracking-wide text-gray-700">1. Rôle & Identité (Persona)</label>
+                            <span class="text-xs text-blue-600 font-mono">&lt;role&gt;</span>
+                        </div>
+                        <p class="text-xs text-gray-500 mb-2">Définissez qui est l'IA (ex: Expert pédagogue, Psychologue du travail).</p>
+                        <textarea id="roleInput" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition h-24 text-sm" placeholder="Tu es un expert en pédagogie différenciée avec 20 ans d'expérience..."></textarea>
+                    </div>
+
+                    <!-- Section 2: Contexte -->
+                    <div class="input-group">
+                        <div class="flex justify-between items-center mb-2">
+                            <label class="block text-sm font-bold uppercase tracking-wide text-gray-700">2. Contexte & Données (Ancrage)</label>
+                            <span class="text-xs text-blue-600 font-mono">&lt;context&gt;</span>
+                        </div>
+                        <p class="text-xs text-gray-500 mb-2">Collez ici les articles, données ou le cours complet. Ce bloc sera placé en premier pour l'ancrage.</p>
+                        <textarea id="contextInput" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition h-40 text-sm" placeholder="Voici le texte de référence ou les données à analyser..."></textarea>
+                    </div>
+
+                    <!-- Section 3: Paramètres & Contraintes (MODIFIÉ) -->
+                    <div class="bg-gradient-to-br from-gray-50 to-white p-5 rounded-xl border border-gray-300 shadow-sm relative overflow-hidden">
+                        <div class="absolute top-0 left-0 w-1 h-full bg-blue-500"></div>
+                        
+                        <h3 class="text-sm font-bold uppercase text-gray-800 mb-4 flex items-center gap-2">
+                            <i class="fa-solid fa-sliders text-blue-600"></i> 3. Paramètres & Contraintes
+                        </h3>
+                        
+                        <!-- Grid for controls -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                            <!-- Verbosité -->
+                            <div class="bg-white p-3 rounded-lg border border-gray-200 shadow-sm hover:border-blue-300 transition">
+                                <label class="block text-xs font-bold text-gray-500 mb-2 uppercase"><i class="fa-solid fa-volume-high mr-1"></i> Verbosité</label>
+                                <select id="verbositySelect" class="w-full bg-transparent text-sm focus:outline-none cursor-pointer">
+                                    <option value="default">Normale (Efficace)</option>
+                                    <option value="low">Faible (Concis)</option>
+                                    <option value="high">Élevée (Détaillé)</option>
+                                </select>
+                            </div>
+                            <!-- Format -->
+                            <div class="bg-white p-3 rounded-lg border border-gray-200 shadow-sm hover:border-blue-300 transition">
+                                <label class="block text-xs font-bold text-gray-500 mb-2 uppercase"><i class="fa-solid fa-file-code mr-1"></i> Format</label>
+                                <input type="text" id="formatInput" class="w-full bg-transparent text-sm focus:outline-none" placeholder="JSON, Tableau, Markdown...">
+                            </div>
+                        </div>
+
+                        <!-- Manual Constraints -->
+                        <div class="mb-4">
+                            <label class="block text-xs font-bold text-gray-500 mb-2 uppercase"><i class="fa-solid fa-ban mr-1"></i> Contraintes Spécifiques</label>
+                            <textarea id="constraintsInput" class="w-full p-3 border border-gray-200 rounded-lg bg-white text-sm h-20 focus:ring-2 focus:ring-blue-100 focus:border-blue-300 outline-none transition resize-none" placeholder="Ex: Ne pas utiliser de jargon technique, se limiter à l'Europe, répondre en français..."></textarea>
+                        </div>
+
+                        <!-- Deep Thinking Toggle (Moved to bottom) -->
+                        <label for="thinkingToggle" class="flex items-center justify-between p-3 bg-indigo-50 border border-indigo-200 rounded-lg cursor-pointer hover:bg-indigo-100 transition group">
+                            <div class="flex items-center gap-3">
+                                <div class="bg-indigo-600 text-white w-8 h-8 rounded-full flex items-center justify-center shadow-sm">
+                                    <i class="fa-solid fa-brain"></i>
+                                </div>
+                                <div>
+                                    <span class="block text-sm font-bold text-indigo-900">Deep Thinking</span>
+                                    <span class="text-xs text-indigo-600">Force la planification et l'autocritique</span>
+                                </div>
+                            </div>
+                            <div class="relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in">
+                                <input type="checkbox" name="toggle" id="thinkingToggle" class="toggle-checkbox absolute block w-5 h-5 rounded-full bg-white border-4 appearance-none cursor-pointer border-gray-300"/>
+                                <label for="thinkingToggle" class="toggle-label block overflow-hidden h-5 rounded-full bg-gray-300 cursor-pointer"></label>
+                            </div>
+                        </label>
+                    </div>
+
+                    <!-- Section 4: Few-Shot Examples (MODIFIÉ) -->
+                    <div class="input-group">
+                        <div class="flex justify-between items-center mb-2">
+                            <label class="block text-sm font-bold uppercase tracking-wide text-gray-700">4. Exemples (Few-Shot)</label>
+                            <span class="text-xs text-blue-600 font-mono">&lt;examples&gt;</span>
+                        </div>
+                        <p class="text-xs text-gray-500 mb-2">Montrez au modèle ce que vous attendez (Optionnel mais recommandé).</p>
+                        <textarea id="examplesInput" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition h-32 text-sm font-mono text-gray-600" placeholder="Exemple:
+INPUT: 'Le client est furieux car sa commande est en retard.'
+OUTPUT: 'Cher client, je comprends parfaitement votre frustration concernant le retard de votre commande. Je vais immédiatement vérifier le statut de livraison...'"></textarea>
+                    </div>
+
+                    <!-- Section 5: Tâche -->
+                    <div class="input-group">
+                        <div class="flex justify-between items-center mb-2">
+                            <label class="block text-sm font-bold uppercase tracking-wide text-gray-700 text-blue-700">5. Tâche & Instruction (Final)</label>
+                            <span class="text-xs text-blue-600 font-mono">&lt;task&gt;</span>
+                        </div>
+                        <p class="text-xs text-gray-500 mb-2">L'instruction directe. Elle sera placée à la fin du prompt pour maximiser l'attention.</p>
+                        <textarea id="taskInput" class="w-full p-3 border-2 border-blue-100 bg-blue-50 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition h-32 text-sm font-medium" placeholder="Ex: Rédige le plan détaillé de l'exposé en te basant sur l'analyse ci-dessus."></textarea>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Right Panel: Preview -->
+            <div class="w-full md:w-1/2 flex flex-col bg-gray-900 border-t md:border-t-0 md:border-l border-gray-700 h-1/2 md:h-full">
+                <div class="p-3 bg-gray-800 border-b border-gray-700 flex justify-between items-center">
+                    <span class="text-xs text-gray-400 font-bold uppercase tracking-wider">Aperçu du Prompt (Ready for Gemini 3)</span>
+                    <span class="text-[10px] bg-gray-700 text-gray-300 px-2 py-1 rounded">Format XML Structuré</span>
+                </div>
+                <div class="flex-1 relative">
+                    <textarea id="finalOutput" readonly class="preview-box w-full h-full p-6 text-sm resize-none focus:outline-none" spellcheck="false"></textarea>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Notification Toast -->
+    <div id="toast" class="fixed bottom-5 right-5 bg-green-600 text-white px-6 py-3 rounded shadow-lg transform translate-y-20 opacity-0 transition-all duration-300 z-50">
+        Prompt copié dans le presse-papier !
+    </div>
+
+    <script>
+        // --- Navigation Logic ---
+        function goToApp() {
+            document.getElementById('landing-page').style.display = 'none';
+            const appPage = document.getElementById('app-page');
+            appPage.classList.remove('hidden');
+            appPage.style.display = 'flex';
+        }
+
+        function goHome() {
+            document.getElementById('app-page').style.display = 'none';
+            document.getElementById('landing-page').style.display = 'flex';
+        }
+
+        // --- Prompt Generator Logic (from original file) ---
+        const inputs = {
+            role: document.getElementById('roleInput'),
+            context: document.getElementById('contextInput'),
+            task: document.getElementById('taskInput'),
+            constraints: document.getElementById('constraintsInput'),
+            format: document.getElementById('formatInput'),
+            examples: document.getElementById('examplesInput'),
+            verbosity: document.getElementById('verbositySelect'),
+            thinking: document.getElementById('thinkingToggle')
+        };
+        const output = document.getElementById('finalOutput');
+        const toast = document.getElementById('toast');
+
+        function generatePrompt() {
+            const role = inputs.role.value.trim();
+            const context = inputs.context.value.trim();
+            const task = inputs.task.value.trim();
+            const userConstraints = inputs.constraints.value.trim();
+            const format = inputs.format.value.trim();
+            const examples = inputs.examples.value.trim();
+            const verbosity = inputs.verbosity.value;
+            const useThinking = inputs.thinking.checked;
+
+            let promptParts = [];
+
+            // 1. Role (Identity)
+            if (role) {
+                promptParts.push(`<role>\n${role}\n</role>`);
+            }
+
+            // 2. Constraints Compilation
+            let allConstraints = [];
+            
+            if (userConstraints) allConstraints.push(userConstraints);
+            
+            if (verbosity === 'low') {
+                allConstraints.push("Style : Extrêmement concis, va droit au but. Pas de phrases de remplissage.");
+            } else if (verbosity === 'high') {
+                allConstraints.push("Style : Très détaillé, exhaustif et explicatif.");
+            } else {
+                allConstraints.push("Style : Direct et professionnel.");
+            }
+
+            if (format) {
+                allConstraints.push(`Format de sortie requis : ${format}`);
+            }
+
+            if (useThinking) {
+                allConstraints.push("PROCESSUS DE PENSÉE REQUIS :");
+                allConstraints.push("1. PLANIFICATION : Avant de répondre, décris étape par étape comment tu vas traiter la demande.");
+                allConstraints.push("2. AUTOCRITIQUE : Vérifie ta réponse pour t'assurer qu'elle respecte toutes les contraintes et l'intention de l'utilisateur.");
+                allConstraints.push("3. RÉPONSE FINALE : Donne ta réponse finale uniquement après ces étapes.");
+            }
+
+            if (allConstraints.length > 0) {
+                promptParts.push(`<constraints>\n${allConstraints.join('\n')}\n</constraints>`);
+            }
+
+            // 3. Examples
+            if (examples) {
+                promptParts.push(`<examples>\n${examples}\n</examples>`);
+            }
+
+            // 4. Context
+            if (context) {
+                promptParts.push(`<context>\n${context}\n</context>`);
+                promptParts.push(`En te basant strictement sur le contexte fourni ci-dessus dans les balises <context>...`);
+            }
+
+            // 5. Task
+            if (task) {
+                promptParts.push(`<task>\n${task}\n</task>`);
+            } else {
+                promptParts.push(`<task>\n[En attente de votre instruction...]\n</task>`);
+            }
+
+            output.value = promptParts.join('\n\n');
+        }
+
+        // Event Listeners
+        Object.values(inputs).forEach(input => {
+            if(input) { // Check existence
+                input.addEventListener('input', generatePrompt);
+                input.addEventListener('change', generatePrompt);
+            }
+        });
+
+        // Initial generation
+        generatePrompt();
+
+        function copyToClipboard() {
+            output.select();
+            output.setSelectionRange(0, 99999);
+            document.execCommand('copy');
+            
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            setTimeout(() => {
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
